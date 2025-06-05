@@ -7,117 +7,149 @@
     <style>
         body {
             margin: 0;
-            padding: 20px;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #1e3c72, #2a5298);
-            color: white;
-            min-height: 100vh;
+            padding: 15px;
+            font-family: Arial, sans-serif;
+            background: #2c3e50;
+            height: 100vh;
+            overflow: hidden;
         }
         
         .container {
-            max-width: 1200px;
-            margin: 0 auto;
+            width: 100%;
+            height: 100vh;
+            background: #34495e;
+            border-radius: 10px;
+            padding: 15px;
+            box-sizing: border-box;
+            display: flex;
+            flex-direction: row;
+            gap: 15px;
         }
         
         h1 {
             text-align: center;
-            margin-bottom: 30px;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
-            font-size: 2.5em;
-            background: linear-gradient(45deg, #ff6b6b, #4ecdc4, #45b7d1);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
+            color: white;
+            margin: 0 0 15px 0;
+            font-size: 1.8em;
         }
         
-        .controls {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 20px;
-            margin-bottom: 20px;
-            padding: 20px;
-            background: rgba(255,255,255,0.1);
-            backdrop-filter: blur(10px);
-            border-radius: 15px;
-            border: 1px solid rgba(255,255,255,0.2);
+        .main-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .controls-panel {
+            width: 250px;
+            background: #2c3e50;
+            border-radius: 5px;
+            padding: 15px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            overflow-y: auto;
         }
         
         .control-group {
             display: flex;
             flex-direction: column;
-            gap: 8px;
+            gap: 5px;
+            background: #34495e;
+            padding: 10px;
+            border-radius: 5px;
         }
         
         label {
-            font-weight: bold;
-            font-size: 0.9em;
-            color: #e0e0e0;
-        }
-        
-        select, input[type="range"] {
-            padding: 8px;
-            border: none;
-            border-radius: 8px;
-            background: rgba(255,255,255,0.2);
             color: white;
-            font-size: 14px;
+            font-size: 12px;
+            font-weight: bold;
         }
         
         select {
+            padding: 8px;
+            border: none;
+            border-radius: 5px;
+            background: #2c3e50;
+            color: white;
             cursor: pointer;
         }
         
         select option {
-            background: #2a5298;
+            background: #2c3e50;
             color: white;
         }
         
         input[type="range"] {
-            height: 6px;
-            background: rgba(255,255,255,0.3);
+            width: 100%;
+            height: 4px;
+            background: #2c3e50;
             outline: none;
-            cursor: pointer;
+            border-radius: 2px;
         }
         
         input[type="range"]::-webkit-slider-thumb {
             appearance: none;
-            width: 18px;
-            height: 18px;
+            width: 16px;
+            height: 16px;
             border-radius: 50%;
-            background: linear-gradient(45deg, #ff6b6b, #4ecdc4);
+            background: #3498db;
             cursor: pointer;
-            box-shadow: 0 2px 6px rgba(0,0,0,0.3);
         }
         
-        .canvas-container {
-            display: flex;
-            justify-content: center;
-            margin-bottom: 20px;
+        input[type="range"]::-moz-range-thumb {
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            background: #3498db;
+            cursor: pointer;
+            border: none;
         }
         
-        canvas {
-            border: 3px solid rgba(255,255,255,0.3);
-            border-radius: 10px;
-            box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+        #fractalCanvas {
+            display: block;
+            margin: 0 auto;
+            border-radius: 5px;
+            background: #000;
+            flex: 1;
             cursor: crosshair;
-            background: black;
         }
         
         .info {
-            text-align: center;
-            background: rgba(255,255,255,0.1);
-            padding: 15px;
-            border-radius: 10px;
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255,255,255,0.2);
+            background: #34495e;
+            padding: 10px;
+            border-radius: 5px;
+            margin-top: 10px;
+        }
+        
+        .info p {
+            color: white;
+            font-size: 12px;
+            margin: 5px 0;
         }
         
         .controls-info {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 10px;
-            margin-top: 10px;
-            font-size: 0.9em;
+            grid-template-columns: 1fr 1fr;
+            gap: 5px;
+            margin-top: 5px;
+        }
+        
+        .controls-info div {
+            color: white;
+            font-size: 11px;
+            padding: 5px;
+            background: #2c3e50;
+            border-radius: 3px;
+        }
+        
+        #coordinates {
+            color: #3498db;
+            font-family: monospace;
+            font-size: 11px;
+            background: #2c3e50;
+            padding: 5px;
+            border-radius: 3px;
+            margin-top: 5px;
         }
         
         .loading {
@@ -125,50 +157,72 @@
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            background: rgba(0,0,0,0.8);
+            background: #34495e;
             color: white;
             padding: 20px;
-            border-radius: 10px;
+            border-radius: 5px;
             display: none;
             z-index: 1000;
+            border: 2px solid #3498db;
+        }
+        
+        .loading::before {
+            content: '';
+            display: inline-block;
+            width: 16px;
+            height: 16px;
+            border: 2px solid #3498db;
+            border-radius: 50%;
+            border-top-color: transparent;
+            animation: spin 1s linear infinite;
+            margin-right: 10px;
+            vertical-align: middle;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        
+        .value-display {
+            color: #3498db;
+            font-weight: bold;
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>🌀 Interactive Fractal Explorer 🌀</h1>
+        <div class="main-content">
+            <h1>Interactive Fractal Explorer</h1>
+            <canvas id="fractalCanvas" width="800" height="600"></canvas>
+        </div>
         
-        <div class="controls">
+        <div class="controls-panel">
             <div class="control-group">
                 <label for="fractalType">Fractal Type:</label>
                 <select id="fractalType">
-                    <option value="mandelbrot1">Mandelbrot z^1</option>
-                    <option value="mandelbrot2">Mandelbrot z^2</option>
-                    <option value="mandelbrot3">Mandelbrot z^3</option>
-                    <option value="mandelbrot4">Mandelbrot z^4</option>
-                    <option value="mandelbrot-2">Mandelbrot z^-2</option>
+                    <option value="mandelbrot1">Mandelbrot z¹</option>
+                    <option value="mandelbrot2" selected>Mandelbrot z²</option>
+                    <option value="mandelbrot3">Mandelbrot z³</option>
+                    <option value="mandelbrot4">Mandelbrot z⁴</option>
                     <option value="burningship">Burning Ship</option>
                     <option value="julia">Julia Set</option>
                     <option value="phoenix">Phoenix</option>
-                    <option value="newton">Newton</option>
                     <option value="tricorn">Tricorn</option>
                     <option value="multibrot">Multibrot</option>
-                    <option value="dragon">Dragon Curve</option>
-                    <option value="spiral">Spiral Art</option>
+                    <option value="newton">Newton</option>
                     <option value="rose">Rose Curve</option>
-                    <option value="lissajous">Lissajous</option>
                     <option value="hypocycloid">Hypocycloid</option>
                     <option value="fermat">Fermat Spiral</option>
                 </select>
             </div>
             
             <div class="control-group">
-                <label for="iterations">Iterations: <span id="iterValue">100</span></label>
+                <label>Iterations: <span id="iterValue" class="value-display">100</span></label>
                 <input type="range" id="iterations" min="50" max="500" value="100">
             </div>
             
             <div class="control-group">
-                <label for="zoom">Zoom: <span id="zoomValue">100</span></label>
+                <label>Zoom: <span id="zoomValue" class="value-display">100</span></label>
                 <input type="range" id="zoom" min="10" max="1000" value="100">
             </div>
             
@@ -182,27 +236,23 @@
                     <option value="grayscale">Grayscale</option>
                 </select>
             </div>
-        </div>
-        
-        <div class="canvas-container">
-            <canvas id="fractalCanvas" width="800" height="600"></canvas>
-        </div>
-        
-        <div class="info">
-            <p><strong>Controls:</strong></p>
-            <div class="controls-info">
-                <div><strong>W/S:</strong> Zoom In/Out</div>
-                <div><strong>Arrow Keys:</strong> Navigate</div>
-                <div><strong>Mouse:</strong> Click to center</div>
-                <div><strong>Sliders:</strong> Auto-render on change</div>
+            
+            <div class="info">
+                <p><strong>Controls:</strong></p>
+                <div class="controls-info">
+                    <div><strong>W/S:</strong> Zoom In/Out</div>
+                    <div><strong>Arrows:</strong> Navigate</div>
+                    <div><strong>Mouse:</strong> Click to center</div>
+                    <div><strong>Sliders:</strong> Auto-render</div>
+                </div>
+                <div id="coordinates">Center: (0, 0) | Zoom: 100x</div>
             </div>
-            <p id="coordinates">Center: (0, 0) | Zoom: 100x</p>
         </div>
     </div>
     
     <div class="loading" id="loading">Rendering fractal...</div>
 
-    <script>
+        <script>
         class FractalRenderer {
             constructor() {
                 this.canvas = document.getElementById('fractalCanvas');
@@ -363,11 +413,7 @@
                         zy = 4 * zx * zx * zx * zy - 4 * zx * zy * zy * zy + cy;
                         zx = temp;
                     } else if (power === -2) {
-                        const denom = (zx * zx + zy * zy);
-                        if (denom === 0) return i;
-                        const temp = (zx * zx - zy * zy) / (denom * denom) + cx;
-                        zy = -2 * zx * zy / (denom * denom) + cy;
-                        zx = temp;
+                        // Removed - this case is no longer used
                     }
                 }
                 return this.maxIterations;
@@ -421,22 +467,41 @@
             
             newton(zx, zy) {
                 for (let i = 0; i < this.maxIterations; i++) {
-                    // Newton's method for z^3 - 1 = 0
+                    // Calculate z^3
                     const z3x = zx * zx * zx - 3 * zx * zy * zy;
                     const z3y = 3 * zx * zx * zy - zy * zy * zy;
                     
-                    const denom = 9 * (zx * zx + zy * zy) * (zx * zx + zy * zy);
+                    // Calculate 3z^2 (derivative)
+                    const dz3x = 3 * (zx * zx - zy * zy);
+                    const dz3y = 6 * zx * zy;
+                    
+                    // Calculate denominator |3z^2|^2
+                    const denom = dz3x * dz3x + dz3y * dz3y;
                     if (denom < 1e-10) return i;
                     
-                    const newZx = zx - (z3x - 1) * 3 * (zx * zx + zy * zy) / denom;
-                    const newZy = zy - z3y * 3 * (zx * zx + zy * zy) / denom;
+                    // Newton iteration: z = z - (z^3 - 1) / (3z^2)
+                    const numeratorX = z3x - 1;
+                    const numeratorY = z3y;
                     
-                    if (Math.abs(newZx - zx) + Math.abs(newZy - zy) < 1e-6) return i;
+                    const newZx = zx - (numeratorX * dz3x + numeratorY * dz3y) / denom;
+                    const newZy = zy - (numeratorY * dz3x - numeratorX * dz3y) / denom;
+                    
+                    // Check convergence
+                    if (Math.abs(newZx - zx) + Math.abs(newZy - zy) < 1e-6) {
+                        // Return different values based on which root we converged to
+                        const root1 = Math.abs(newZx - 1) + Math.abs(newZy);
+                        const root2 = Math.abs(newZx + 0.5) + Math.abs(newZy - Math.sqrt(3)/2);
+                        const root3 = Math.abs(newZx + 0.5) + Math.abs(newZy + Math.sqrt(3)/2);
+                        
+                        if (root1 < 0.1) return i; // Converged to root 1
+                        if (root2 < 0.1) return i + this.maxIterations/3; // Converged to root 2  
+                        if (root3 < 0.1) return i + 2*this.maxIterations/3; // Converged to root 3
+                    }
                     
                     zx = newZx;
                     zy = newZy;
                 }
-                return this.maxIterations;
+                return this.maxIterations; // Didn't converge
             }
             
             tricorn(cx, cy) {
@@ -471,40 +536,6 @@
                 return this.maxIterations;
             }
             
-            dragon(x, y) {
-                // Dragon curve approximation using iteration
-                let px = x / this.zoom - this.centerX;
-                let py = y / this.zoom - this.centerY;
-                let result = 0;
-                
-                for (let i = 0; i < this.maxIterations; i++) {
-                    const r = Math.sqrt(px * px + py * py);
-                    const angle = Math.atan2(py, px);
-                    
-                    px = r * Math.cos(angle * 2) * 0.8;
-                    py = r * Math.sin(angle * 2) * 0.8;
-                    
-                    if (Math.abs(px) + Math.abs(py) > 2) {
-                        result = i;
-                        break;
-                    }
-                }
-                return result;
-            }
-            
-            spiral(x, y) {
-                const cx = (x - this.width / 2) / this.zoom + this.centerX;
-                const cy = (y - this.height / 2) / this.zoom + this.centerY;
-                
-                const r = Math.sqrt(cx * cx + cy * cy);
-                const theta = Math.atan2(cy, cx);
-                
-                // Archimedean spiral: r = a * theta
-                const spiralR = 0.1 * theta;
-                const diff = Math.abs(r - spiralR);
-                
-                return Math.floor(this.maxIterations * Math.exp(-diff * 10));
-            }
             
             rose(x, y) {
                 const cx = (x - this.width / 2) / this.zoom + this.centerX;
@@ -519,20 +550,6 @@
                 const diff = Math.abs(r - roseR);
                 
                 return Math.floor(this.maxIterations * Math.exp(-diff * 5));
-            }
-            
-            lissajous(x, y) {
-                const t = (x + y) / 100;
-                const a = 3, b = 4; // Frequency ratios
-                
-                const lx = Math.sin(a * t);
-                const ly = Math.sin(b * t);
-                
-                const cx = (x - this.width / 2) / this.zoom + this.centerX;
-                const cy = (y - this.height / 2) / this.zoom + this.centerY;
-                
-                const dist = Math.sqrt((cx - lx) * (cx - lx) + (cy - ly) * (cy - ly));
-                return Math.floor(this.maxIterations * Math.exp(-dist * 10));
             }
             
             hypocycloid(x, y) {
@@ -574,19 +591,16 @@
                     case 'mandelbrot2': return this.mandelbrot(cx, cy, 2);
                     case 'mandelbrot3': return this.mandelbrot(cx, cy, 3);
                     case 'mandelbrot4': return this.mandelbrot(cx, cy, 4);
-                    case 'mandelbrot-2': return this.mandelbrot(cx, cy, -2);
                     case 'burningship': return this.burningShip(cx, cy);
                     case 'julia': return this.julia(cx, cy);
                     case 'phoenix': return this.phoenix(cx, cy);
-                    case 'newton': return this.newton(cx, cy);
                     case 'tricorn': return this.tricorn(cx, cy);
                     case 'multibrot': return this.multibrot(cx, cy);
-                    case 'dragon': return this.dragon(x, y);
                     case 'spiral': return this.spiral(x, y);
                     case 'rose': return this.rose(x, y);
-                    case 'lissajous': return this.lissajous(x, y);
                     case 'hypocycloid': return this.hypocycloid(x, y);
                     case 'fermat': return this.fermat(x, y);
+                    case 'newton': return this.newton(x, y);
                     default: return this.mandelbrot(cx, cy, 2);
                 }
             }
@@ -624,5 +638,6 @@
             new FractalRenderer();
         });
     </script>
+
 </body>
 </html>
