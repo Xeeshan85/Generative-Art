@@ -29,10 +29,10 @@ Fractals are infinitely complex, self-similar patterns generated using recursive
 
 ### 3. **Barnsley's Fern**
 - **Equation**: A set of affine transformations:
-f1: x' = 0, y' = 0.16y
-f2: x' = 0.85x + 0.04y, y' = -0.04x + 0.85y + 1.6
-f3: x' = 0.20x - 0.26y, y' = 0.23x + 0.22y + 1.6
-f4: x' = -0.15x + 0.28y, y' = 0.26x + 0.24y + 0.44
+- `f1: x' = 0, y' = 0.16y`
+- `f2: x' = 0.85x + 0.04y, y' = -0.04x + 0.85y + 1.6`
+- `f3: x' = 0.20x - 0.26y, y' = 0.23x + 0.22y + 1.6`
+- `f4: x' = -0.15x + 0.28y, y' = 0.26x + 0.24y + 0.44`
 - **Description**: Creates a lifelike fern shape.
 
 ### 4. **Dragon Curve**
@@ -99,14 +99,6 @@ f4: x' = -0.15x + 0.28y, y' = 0.26x + 0.24y + 0.44
 ### 11. **Fermat Spiral**
 - **Equation**: `r = √θ`
 - **Description**: Found in nature (e.g., sunflower seed patterns).
-
----
-
-## 🗂️ Project Structure
-Generative-Art/
-├── fractal-renderer-simple.html
-├── fractal-renderer-complex.html
-├── README.md
 
 
 ---
