@@ -165,11 +165,21 @@
                 sizeControl.style.display = 'flex';
                 document.getElementById('iterations').max = 15;
                 document.getElementById('iterations').value = 10;
-            } else if (type === 'sierpinski' || type === 'carpet') {
+            } else if (type === 'sierpinski') {
                 angleControl.style.display = 'none';
                 sizeControl.style.display = 'flex';
                 document.getElementById('iterations').max = 8;
                 document.getElementById('iterations').value = 5;
+            } else if (type === 'carpet') {
+                angleControl.style.display = 'none';
+                sizeControl.style.display = 'none'; // hide size control for carpet
+                document.getElementById('iterations').max = 8;
+                document.getElementById('iterations').value = 5;
+            } else if (type === 'koch') {
+                angleControl.style.display = 'none'; // hide angle for koch
+                sizeControl.style.display = 'flex';
+                document.getElementById('iterations').max = 6;
+                document.getElementById('iterations').value = 4;
             } else {
                 angleControl.style.display = type === 'tree' ? 'flex' : 'none';
                 sizeControl.style.display = 'flex';
