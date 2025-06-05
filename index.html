@@ -1,35 +1,76 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Generative Art</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive Fractal Generator</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 15px;
+            font-family: Arial, sans-serif;
+            background: #2c3e50;
+            height: 100vh;
+            overflow-y: scroll;
+        }
+        h1, h2, h3, p, li {
+            color: white;
+        }
+        a {
+            color: #3498db;
+            text-decoration: none;
+        }
+        a:hover {
+            text-decoration: underline;
+        }
+        .section {
+            margin-bottom: 25px;
+        }
+    </style>
 </head>
 <body>
-  <h1>Welcome to Generative Art</h1>
-  <p>This project showcases various fractal visualizations using HTML and JavaScript.</p>
-  <ul>
-    <li>
-      <a href="fractal-renderer-simple.html"><strong>Fractal Renderer (Simple)</strong></a><br>
-      Includes classic fractals like:
-      <ul>
-        <li>Von Koch Snowflake</li>
-        <li>Dragon Curve</li>
-        <li>Fractal Tree</li>
-        <li>Barnsley Fern</li>
-        <li>Other basic recursive patterns</li>
-      </ul>
-    </li>
-    <li>
-      <a href="fractal-renderer-complex.html"><strong>Fractal Renderer (Complex)</strong></a><br>
-      Includes complex fractals based on iterative functions:
-      <ul>
-        <li>Mandelbrot Set</li>
-        <li>Julia Set</li>
-        <li>Newton Fractals</li>
-        <li>Burning Ship</li>
-        <li>Other escape-time fractals</li>
-      </ul>
-    </li>
-  </ul>
+    <h1>Generative Fractals: An Artistic and Mathematical Journey</h1>
+    <div class="section">
+        <p>Fractals are infinitely complex patterns that are self-similar across different scales. They are created by repeating a simple process over and over in an ongoing feedback loop. Fractals are not just beautiful—they are deeply connected to nature, chaos theory, and complex systems.</p>
+    </div>
+
+    <div class="section">
+        <h2><a href="fractal-renderer-simple.html">Simple Fractals</a></h2>
+        <ul>
+            <li><strong>Von Koch Snowflake:</strong> An equilateral triangle recursively subdivided. Equation: Replace middle third of each line segment with two sides of an equilateral triangle.
+                <br><em>Rule: Each segment → 4 segments (length/3)</em></li>
+            <li><strong>Fractal Tree:</strong> Recursive binary branching, each branch splits into two. <br><em>Angle-based recursive drawing using trigonometry.</em></li>
+            <li><strong>Barnsley's Fern:</strong> IFS-based fern using affine transformations.
+                <br><em>xₙ₊₁ = a*xₙ + b*yₙ + e, yₙ₊₁ = c*xₙ + d*yₙ + f</em></li>
+            <li><strong>Dragon Curve:</strong> Recursive folding curve. Turns alternate left and right.
+                <br><em>Drawn via L-systems: F → F+G, G → F-G</em></li>
+            <li><strong>Sierpinski Triangle:</strong> Triangle subdivided into smaller triangles.
+                <br><em>Remove central triangle in each iteration.</em></li>
+            <li><strong>Sierpinski Carpet:</strong> Square divided into 9, center removed recursively.
+                <br><em>Fractal dimension: log(8)/log(3)</em></li>
+        </ul>
+    </div>
+
+    <div class="section">
+        <h2><a href="fractal-renderer-complex.html">Complex Fractals</a></h2>
+        <ul>
+            <li><strong>Mandelbrot Set z¹, z², z³, z⁴:</strong> Iteration: <em>zₖ → zₖ^n + c</em>. If |z| escapes to infinity, point is not in the set. Higher powers increase complexity.</li>
+            <li><strong>Burning Ship:</strong> Iteration: <em>z = (|Re(z)| + i|Im(z)|)^2 + c</em>. Creates flame-like structure.</li>
+            <li><strong>Julia Set:</strong> Similar to Mandelbrot, but with fixed c. <em>zₖ+1 = zₖ^2 + c</em>. Varies wildly with c.</li>
+            <li><strong>Phoenix:</strong> Modified Mandelbrot: <em>zₖ+1 = zₖ^2 + c + p*zₖ⁻¹</em></li>
+            <li><strong>Tricorn:</strong> Iteration: <em>zₖ+1 = ̅zₖ^2 + c</em> (conjugate Mandelbrot)</li>
+            <li><strong>Multibrot:</strong> Generalized Mandelbrot: <em>zₖ+1 = zₖ^d + c</em> (d > 2)</li>
+            <li><strong>Newton Fractal:</strong> Root-finding fractals: <em>zₖ+1 = z - f(z)/f'(z)</em>. Behavior depends on roots of f(z).</li>
+            <li><strong>Rose Curve:</strong> Polar equation: <em>r = cos(kθ)</em> or <em>r = sin(kθ)</em>. Forms petal shapes.</li>
+            <li><strong>Hypocycloid:</strong> Curve traced by a point on a circle rolling inside another circle.
+                <br><em>Parametric: x = (a - b)cos(t) + b cos((a - b)t/b)</em></li>
+            <li><strong>Fermat Spiral:</strong> Spiral where radius grows with sqrt of angle.
+                <br><em>r = √θ</em> or <em>x = √θ cos(θ), y = √θ sin(θ)</em></li>
+        </ul>
+    </div>
+
+    <div class="section">
+        <p>Explore the links above to interact with and visualize each fractal.</p>
+    </div>
 </body>
 </html>
