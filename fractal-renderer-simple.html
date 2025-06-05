@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive Fractal Generator</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 15px;
+            font-family: Arial, sans-serif;
+            background: #2c3e50;
+            height: 100vh;
+            overflow: hidden;
+        }
+        
+        .container {
+            width: 100%;
+            height: 100vh;
+            background: #34495e;
+            border-radius: 10px;
+            padding: 15px;
+            box-sizing: border-box;
+            display: flex;
+            flex-direction: row;
+            gap: 15px;
+        }
+        
+        h1 {
+            text-align: center;
+            color: white;
+            margin: 0 0 15px 0;
+            font-size: 1.8em;
+        }
+        
+        .main-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .controls-panel {
+            width: 200px;
+            background: #2c3e50;
+            border-radius: 5px;
+            padding: 15px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        
+        .controls {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        
+        .control-group {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+            background: #34495e;
+            padding: 10px;
+            border-radius: 5px;
+        }
+        
+        button {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 5px;
+            background: #3498db;
+            color: white;
+            cursor: pointer;
+            width: 100%;
+        }
+        
+        button.active {
+            background: #e74c3c;
+        }
+        
+        input[type="range"] {
+            width: 100%;
+        }
+        
+        label {
+            color: white;
+            font-size: 12px;
+        }
+        
+        #canvas {
+            display: block;
+            margin: 0 auto;
+            border-radius: 5px;
+            background: #000;
+            flex: 1;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="main-content">
+            <h1>Interactive Fractal Generator</h1>
+            <canvas id="canvas" width="750" height="450"></canvas>
+        </div>
+        
+        <div class="controls-panel">
+            <div class="controls">
+                <button id="koch" class="active" onclick="setFractal('koch')">von Koch Snowflake</button>
+                <button id="tree" onclick="setFractal('tree')">Fractal Tree</button>
+                <button id="fern" onclick="setFractal('fern')">Barnsley's Fern</button>
+                <button id="dragon" onclick="setFractal('dragon')">Dragon Curve</button>
+                <button id="sierpinski" onclick="setFractal('sierpinski')">Sierpinski Triangle</button>
+                <button id="carpet" onclick="setFractal('carpet')">Sierpinski Carpet</button>
+            </div>
+            
+            <div class="control-group">
+                <label>Iterations: <span id="iter-value">4</span></label>
+                <input type="range" id="iterations" min="1" max="8" value="4" oninput="updateFractal()">
+            </div>
+            
+            <div class="control-group" id="angle-control">
+                <label>Angle: <span id="angle-value">30°</span></label>
+                <input type="range" id="angle" min="10" max="90" value="30" oninput="updateFractal()">
+            </div>
+            
+            <div class="control-group" id="size-control">
+                <label>Size: <span id="size-value">500</span></label>
+                <input type="range" id="size" min="50" max="500" value="100" oninput="updateFractal()">
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d');
+        let currentFractal = 'koch';
+        
+        const fractalInfo = {
+            koch: "von Koch Snowflake",
+            tree: "Fractal Tree", 
+            fern: "Barnsley's Fern",
+            dragon: "Dragon Curve",
+            sierpinski: "Sierpinski Triangle",
+            carpet: "Sierpinski Carpet"
+        };
+        
+        function setFractal(type) {
+            currentFractal = type;
+            
+            // Update active button
+            document.querySelectorAll('button').forEach(btn => btn.classList.remove('active'));
+            document.getElementById(type).classList.add('active');
+            
+            // Show/hide controls
+            const angleControl = document.getElementById('angle-control');
+            const sizeControl = document.getElementById('size-control');
+            
+            if (type === 'fern') {
+                angleControl.style.display = 'none';
+                sizeControl.style.display = 'none';
+                document.getElementById('iterations').max = 100000;
+                document.getElementById('iterations').value = 10000;
+            } else if (type === 'dragon') {
+                angleControl.style.display = 'none';
+                sizeControl.style.display = 'flex';
+                document.getElementById('iterations').max = 15;
+                document.getElementById('iterations').value = 10;
+            } else if (type === 'sierpinski' || type === 'carpet') {
+                angleControl.style.display = 'none';
+                sizeControl.style.display = 'flex';
+                document.getElementById('iterations').max = 8;
+                document.getElementById('iterations').value = 5;
+            } else {
+                angleControl.style.display = type === 'tree' ? 'flex' : 'none';
+                sizeControl.style.display = 'flex';
+                document.getElementById('iterations').max = type === 'tree' ? 12 : 6;
+                document.getElementById('iterations').value = type === 'tree' ? 8 : 4;
+            }
+            
+            // Update info
+            document.title = fractalInfo[type];
+            
+            updateFractal();
+        }
+        
+        function updateFractal() {
+            const iterations = parseInt(document.getElementById('iterations').value);
+            const angle = parseInt(document.getElementById('angle').value);
+            const size = parseInt(document.getElementById('size').value);
+            
+            document.getElementById('iter-value').textContent = iterations;
+            document.getElementById('angle-value').textContent = angle + '°';
+            document.getElementById('size-value').textContent = size;
+            
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            switch (currentFractal) {
+                case 'koch':
+                    drawKochSnowflake(iterations, size);
+                    break;
+                case 'tree':
+                    drawFractalTree(iterations, angle, size);
+                    break;
+                case 'fern':
+                    drawBarnsleyFern(iterations);
+                    break;
+                case 'dragon':
+                    drawDragonCurve(iterations, size);
+                    break;
+                case 'sierpinski':
+                    drawSierpinskiTriangle(iterations, size);
+                    break;
+                case 'carpet':
+                    drawSierpinskiCarpet(iterations);
+                    break;
+            }
+        }
+        
+        function drawKochSnowflake(iterations, size) {
+            const centerX = canvas.width / 2;
+            const centerY = canvas.height / 2;
+            const radius = size * 1.5;
+            
+            // Create initial triangle
+            const points = [
+                { x: centerX, y: centerY - radius },
+                { x: centerX + radius * Math.cos(Math.PI / 6), y: centerY + radius * Math.sin(Math.PI / 6) },
+                { x: centerX - radius * Math.cos(Math.PI / 6), y: centerY + radius * Math.sin(Math.PI / 6) }
+            ];
+            
+            ctx.strokeStyle = '#00ff88';
+            ctx.lineWidth = 1;
+            ctx.beginPath();
+            
+            for (let i = 0; i < 3; i++) {
+                const start = points[i];
+                const end = points[(i + 1) % 3];
+                drawKochCurve(start.x, start.y, end.x, end.y, iterations);
+            }
+            
+            ctx.stroke();
+        }
+        
+        function drawKochCurve(x1, y1, x2, y2, iterations) {
+            if (iterations === 0) {
+                ctx.lineTo(x2, y2);
+                return;
+            }
+            
+            const dx = x2 - x1;
+            const dy = y2 - y1;
+            
+            // Calculate the five points
+            const x3 = x1 + dx / 3;
+            const y3 = y1 + dy / 3;
+            
+            const x4 = x1 + 2 * dx / 3;
+            const y4 = y1 + 2 * dy / 3;
+            
+            const x5 = x3 + (x4 - x3) * Math.cos(Math.PI / 3) - (y4 - y3) * Math.sin(Math.PI / 3);
+            const y5 = y3 + (x4 - x3) * Math.sin(Math.PI / 3) + (y4 - y3) * Math.cos(Math.PI / 3);
+            
+            drawKochCurve(x1, y1, x3, y3, iterations - 1);
+            drawKochCurve(x3, y3, x5, y5, iterations - 1);
+            drawKochCurve(x5, y5, x4, y4, iterations - 1);
+            drawKochCurve(x4, y4, x2, y2, iterations - 1);
+        }
+        
+        function drawFractalTree(iterations, angle, size) {
+            ctx.strokeStyle = '#ff6b6b';
+            ctx.lineWidth = 2;
+            
+            const startX = canvas.width / 2;
+            const startY = canvas.height - 50;
+            const length = size * 0.8;
+            
+            ctx.beginPath();
+            ctx.moveTo(startX, startY);
+            drawTreeBranch(startX, startY, length, -Math.PI / 2, iterations, angle * Math.PI / 180);
+            ctx.stroke();
+        }
+        
+        function drawTreeBranch(x, y, length, angle, iterations, branchAngle) {
+            if (iterations === 0) return;
+            
+            const endX = x + length * Math.cos(angle);
+            const endY = y + length * Math.sin(angle);
+            
+            ctx.moveTo(x, y);
+            ctx.lineTo(endX, endY);
+            
+            const newLength = length * 0.7;
+            drawTreeBranch(endX, endY, newLength, angle - branchAngle, iterations - 1, branchAngle);
+            drawTreeBranch(endX, endY, newLength, angle + branchAngle, iterations - 1, branchAngle);
+        }
+        
+        function drawBarnsleyFern(iterations) {
+            ctx.fillStyle = '#4ecdc4';
+            
+            let x = 0;
+            let y = 0;
+            
+            for (let i = 0; i < iterations; i++) {
+                const r = Math.random();
+                let nextX, nextY;
+                
+                if (r < 0.01) {
+                    // Stem
+                    nextX = 0;
+                    nextY = 0.16 * y;
+                } else if (r < 0.86) {
+                    // Successively smaller leaflets
+                    nextX = 0.85 * x + 0.04 * y;
+                    nextY = -0.04 * x + 0.85 * y + 1.6;
+                } else if (r < 0.93) {
+                    // Largest left-hand leaflet
+                    nextX = 0.2 * x - 0.26 * y;
+                    nextY = 0.23 * x + 0.22 * y + 1.6;
+                } else {
+                    // Largest right-hand leaflet
+                    nextX = -0.15 * x + 0.28 * y;
+                    nextY = 0.26 * x + 0.24 * y + 0.44;
+                }
+                
+                x = nextX;
+                y = nextY;
+                
+                // Scale and position for canvas
+                const plotX = canvas.width / 2 + x * 60;
+                const plotY = canvas.height - y * 40;
+                
+                ctx.fillRect(plotX, plotY, 1, 1);
+            }
+        }
+        
+        function drawDragonCurve(iterations, size) {
+            ctx.strokeStyle = '#ff9500';
+            ctx.lineWidth = 2;
+            
+            // Start with a simple horizontal line, scaled by size
+            const length = size * 2;
+            const startX = canvas.width / 2 - length / 2;
+            const startY = canvas.height / 2;
+            const endX = canvas.width / 2 + length / 2;
+            const endY = canvas.height / 2;
+            
+            ctx.beginPath();
+            ctx.moveTo(startX, startY);
+            
+            // Generate dragon curve points
+            const points = generateDragonPoints(startX, startY, endX, endY, iterations);
+            
+            // Draw the curve
+            for (let i = 1; i < points.length; i++) {
+                ctx.lineTo(points[i].x, points[i].y);
+            }
+            
+            ctx.stroke();
+        }
+
+        function generateDragonPoints(x1, y1, x2, y2, iterations) {
+            if (iterations === 0) {
+                return [{x: x1, y: y1}, {x: x2, y: y2}];
+            }
+            
+            const dx = x2 - x1;
+            const dy = y2 - y1;
+            
+            // Calculate the corner point (90-degree turn)
+            const midX = (x1 + x2) / 2;
+            const midY = (y1 + y2) / 2;
+            const cornerX = midX - dy / 2;
+            const cornerY = midY + dx / 2;
+            
+            // Recursively generate both halves
+            const leftPoints = generateDragonPoints(x1, y1, cornerX, cornerY, iterations - 1);
+            const rightPoints = generateDragonPoints(cornerX, cornerY, x2, y2, iterations - 1);
+            
+            // Combine points (remove duplicate corner point)
+            return leftPoints.concat(rightPoints.slice(1));
+        }
+
+        function drawSierpinskiTriangle(iterations, size) {
+            ctx.strokeStyle = '#e056fd';
+            ctx.lineWidth = 1;
+            
+            const centerX = canvas.width / 2;
+            const centerY = canvas.height / 2;
+            const height = size * 1.5;
+            
+            // Initial triangle vertices (equilateral triangle)
+            const top = { x: centerX, y: centerY - height / 2 };
+            const left = { x: centerX - height * Math.cos(Math.PI / 6), y: centerY + height / 2 };
+            const right = { x: centerX + height * Math.cos(Math.PI / 6), y: centerY + height / 2 };
+            
+            ctx.beginPath();
+            drawSierpinskiRecursive(top, left, right, iterations);
+            ctx.stroke();
+        }
+
+        function drawSierpinskiRecursive(p1, p2, p3, iterations) {
+            if (iterations === 0) {
+                // Draw triangle outline
+                ctx.moveTo(p1.x, p1.y);
+                ctx.lineTo(p2.x, p2.y);
+                ctx.lineTo(p3.x, p3.y);
+                ctx.closePath();
+                return;
+            }
+            
+            // Calculate midpoints
+            const mid12 = { x: (p1.x + p2.x) / 2, y: (p1.y + p2.y) / 2 };
+            const mid23 = { x: (p2.x + p3.x) / 2, y: (p2.y + p3.y) / 2 };
+            const mid31 = { x: (p3.x + p1.x) / 2, y: (p3.y + p1.y) / 2 };
+            
+            // Recursively draw three smaller triangles
+            drawSierpinskiRecursive(p1, mid12, mid31, iterations - 1);
+            drawSierpinskiRecursive(mid12, p2, mid23, iterations - 1);
+            drawSierpinskiRecursive(mid31, mid23, p3, iterations - 1);
+        }
+
+        function drawSierpinskiCarpet(iterations) {
+            ctx.fillStyle = '#00d4aa';
+            
+            const size = Math.min(canvas.width, canvas.height) * 0.8;
+            const startX = (canvas.width - size) / 2;
+            const startY = (canvas.height - size) / 2;
+            
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.fillRect(startX, startY, size, size);
+            
+            drawCarpetHole(startX, startY, size, iterations);
+        }
+
+        function drawCarpetHole(x, y, size, iterations) {
+            if (iterations === 0) return;
+            
+            const third = size / 3;
+            
+            // Clear center square
+            ctx.clearRect(x + third, y + third, third, third);
+            
+            // Recursively process the 8 remaining squares
+            for (let i = 0; i < 3; i++) {
+                for (let j = 0; j < 3; j++) {
+                    if (i === 1 && j === 1) continue; // Skip center
+                    drawCarpetHole(x + i * third, y + j * third, third, iterations - 1);
+                }
+            }
+        }
+
+        // Initialize
+        updateFractal();
+    </script>
+</body>
+</html>
